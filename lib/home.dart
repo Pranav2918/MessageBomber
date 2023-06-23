@@ -2,6 +2,7 @@ import 'package:explodemessage/app_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 class Home extends StatelessWidget {
   Home({super.key});
@@ -122,21 +123,9 @@ class Home extends StatelessWidget {
                                   .replaceAll("[", "")
                                   .replaceAll(" ", "");
                               List<String> words = inputString.split(",");
-                              String outputString = providerValue.needNumber
-                                  ? words
-                                      .asMap()
-                                      .map((index, word) => MapEntry(
-                                          index + 1, '${index + 1}. $word'))
-                                      .values
-                                      .join("\n")
-                                  : words
-                                      .asMap()
-                                      .map((index, word) =>
-                                          MapEntry(index + 1, word))
-                                      .values
-                                      .join("\n");
-                              Clipboard.setData(
-                                      ClipboardData(text: outputString))
+                              providerValue.manageString(words);
+                              Clipboard.setData(ClipboardData(
+                                      text: providerValue.shareText))
                                   .then((value) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
@@ -155,18 +144,18 @@ class Home extends StatelessWidget {
                           alignment: Alignment.bottomLeft,
                           child: FloatingActionButton(
                             onPressed: () {
-                              // void shareOnWhatsApp(String message) async {
-                              //   final url =
-                              //       'whatsapp://send?text=${Uri.encodeComponent(message)}';
-
-                              //   if (await canLaunch(url)) {
-                              //     await launch(url);
-                              //   } else {
-                              //     throw 'Could not launch $url';
-                              //   }
-                              // }
+                              String inputString = providerValue.bombedMessage
+                                  .toString()
+                                  .replaceAll("]", "")
+                                  .replaceAll("[", "")
+                                  .replaceAll(" ", "");
+                              List<String> words = inputString.split(",");
+                              providerValue.manageString(words);
+                              Clipboard.setData(
+                                  ClipboardData(text: providerValue.shareText));
+                              Share.share(providerValue.shareText);
                             },
-                            child: Icon(Icons.share),
+                            child: const Icon(Icons.share),
                           ),
                         ),
                       ],
